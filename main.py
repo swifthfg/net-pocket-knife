@@ -2,13 +2,18 @@
 # pip install pygeoip 	=> this repo deprecated yet still works
 # pip install dpkt 		=> packet creation / parsing, with definitions for the basic TCP/IP protocols
 # pip install scapy
+# pip install IPy
+
 
 import pygeoip as pg
 import dpkt
 import socket
 from scapy.all import *
+from IPy import IP as IPTEST
+
 
 GEO_IP_DATABASE_URL = '/opt/geoip/Geo.dat'
+MAX_HOP_DIFFERENCE = 5 # threshold for ttl difference
 
 
 def getIpInfo(targetIp):
@@ -33,15 +38,28 @@ def analysePcap(pcapFilePath):
 		except:
 			pass
 
+
+def checkTTL(ipSrc, ttl):
+	ttlValues = {}
+	if IPTEST(ipSrc).iptype == 'PRIVATE':
+		return
+	if ipSrc not in ttlValues:
+		packet = sr1(IP(dst=ipSrc) / ICMP(), retry=0, timeout=1, verbose=0)
+		ttlValues[ipSrc] = packet.ttl
+	if abs(int(ttl) - int(ttlValues[ipSrc])) > MAX_HOP_DIFFERENCE:
+		print 'Detected possible spoofed packet from: ' + ipSrc
+		print 'TTL: ' + ttl + ' Actual TTL: ' + str(ttlValues[ipSrc])
+
+
 def watchTTL(packet):
 	try:
 		if packet.haslayer(IP):
 			ipSrc = packet.getlayer(IP).src
 			ttl = str(packet.ttl)
-			print 'Packet received from: ' + ipSrc + ' with TTL: ' + ttl
+			checkTTL(ipSrc, ttl)
+			# print 'Packet received from: ' + ipSrc + ' with TTL: ' + ttl
 	except:
 		pass
-
 
 
 def main():
