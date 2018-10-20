@@ -1,11 +1,12 @@
 # database 				=> http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 # pip install pygeoip 	=> this repo deprecated yet still works
 # pip install dpkt 		=> packet creation / parsing, with definitions for the basic TCP/IP protocols
+# pip install scapy
 
 import pygeoip as pg
 import dpkt
 import socket
-
+from scapy.all import *
 
 GEO_IP_DATABASE_URL = '/opt/geoip/Geo.dat'
 
@@ -32,10 +33,21 @@ def analysePcap(pcapFilePath):
 		except:
 			pass
 
+def watchTTL(packet):
+	try:
+		if packet.haslayer(IP):
+			ipSrc = packet.getlayer(IP).src
+			ttl = str(packet.ttl)
+			print 'Packet received from: ' + ipSrc + ' with TTL: ' + ttl
+	except:
+		pass
+
+
 
 def main():
 	# {'city': u'Istanbul', 'region_code': u'34', 'area_code': 0, 'time_zone': 'Asia/Istanbul', 'dma_code': 0, 'metro_code': None, 'country_code3': 'TUR', 'latitude': 41.01859999999999, 'postal_code': None, 'longitude': 28.964699999999993, 'country_code': 'TR', 'country_name': 'Turkey', 'continent': 'EU'}
 	print(getIpInfo('212.2.212.131'))
+	sniff(prn=watchTTL, store=0)
 
 
 if __name__ == '__main__':
