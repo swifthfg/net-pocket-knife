@@ -1,8 +1,8 @@
 # database 				=> http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 # pip install pygeoip 	=> this repo deprecated yet still works
 # pip install dpkt 		=> packet creation / parsing, with definitions for the basic TCP/IP protocols
-# pip install scapy
-# pip install IPy
+# pip install scapy		=> packet creation / parsing
+# pip install IPy		=> IPTEST
 
 
 import pygeoip as pg
