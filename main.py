@@ -62,10 +62,10 @@ def watchTTL(packet):
 		pass
 
 
-def simpleTCPClient():
+def simpleTCPClient(host="www.google.com", port=80):
 	import socket
-	targetHost = "www.google.com"
-	targetPort = 80
+	targetHost = host
+	targetPort = port
 
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	client.connect((targetHost, targetPort))
@@ -75,12 +75,53 @@ def simpleTCPClient():
 	print response
 
 
+def simpleUDPClient():
+	import socket
+	targetHost = "127.0.0.1"
+	targetPort = 80
+	client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	client.sendto("AABBTTFFWW", (targetHost, targetPort))
+
+	data, addr = client.recvfrom(4096)
+
+	print data
+	print addr
+
+
+def handleTCPClient(clientSocket):
+	request = clientSocket.recv(1024)
+	print 'Received: %s' %request
+
+	clientSocket.send('ACK');
+	clientSocket.close()
+
+
+def TCPServer():
+	import socket
+	import threading
+	bindIP = "0.0.0.0"
+	bindPort = 9999
+
+	server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	server.bind((bindIP, bindPort))
+	server.listen(5)
+
+	while True:
+		client, addr = server.accept()
+		print 'Accepted connection from: %s:%d' %(addr[0], addr[1])
+
+		clientHandler = threading.Thread(target=handleTCPClient, args=(client,))
+		clientHandler.start()
+
+
 def main():
 	# {'city': u'Istanbul', 'region_code': u'34', 'area_code': 0, 'time_zone': 'Asia/Istanbul', 'dma_code': 0, 'metro_code': None, 'country_code3': 'TUR', 'latitude': 41.01859999999999, 'postal_code': None, 'longitude': 28.964699999999993, 'country_code': 'TR', 'country_name': 'Turkey', 'continent': 'EU'}
 	# print(getIpInfo('212.2.212.131'))
 	# sniff(prn=watchTTL, store=0)
-	simpleTCPClient()
 
+	#simpleTCPClient()
+	#simpleUDPClient()
+	TCPServer()
 
 if __name__ == '__main__':
 	main()
