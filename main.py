@@ -62,10 +62,24 @@ def watchTTL(packet):
 		pass
 
 
+def simpleTCPClient():
+	import socket
+	targetHost = "www.google.com"
+	targetPort = 80
+
+	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	client.connect((targetHost, targetPort))
+	client.send('GET / HTTP/1.1\nHost: google.com\n\n')
+	response = client.recv(4096)
+
+	print response
+
+
 def main():
 	# {'city': u'Istanbul', 'region_code': u'34', 'area_code': 0, 'time_zone': 'Asia/Istanbul', 'dma_code': 0, 'metro_code': None, 'country_code3': 'TUR', 'latitude': 41.01859999999999, 'postal_code': None, 'longitude': 28.964699999999993, 'country_code': 'TR', 'country_name': 'Turkey', 'continent': 'EU'}
-	print(getIpInfo('212.2.212.131'))
-	sniff(prn=watchTTL, store=0)
+	# print(getIpInfo('212.2.212.131'))
+	# sniff(prn=watchTTL, store=0)
+	simpleTCPClient()
 
 
 if __name__ == '__main__':
