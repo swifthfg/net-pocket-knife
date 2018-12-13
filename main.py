@@ -119,9 +119,9 @@ def main():
 	# print(getIpInfo('212.2.212.131'))
 	# sniff(prn=watchTTL, store=0)
 
-	#simpleTCPClient()
-	#simpleUDPClient()
-	TCPServer()
+	# simpleTCPClient()
+	# simpleUDPClient()
+	# TCPServer()
 
 if __name__ == '__main__':
 	main()
